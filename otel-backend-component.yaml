@@ -1,0 +1,23 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: otel-back-end
+  description: Open Telemetry Back End
+  tags:
+    - postgres
+  links:
+    - url: http://otel.t3demos.com
+      title: Website - Production
+      icon: web
+    - url: http://otel-stage.t3demos.com
+      title: Website - Stage
+      icon: web
+  annotations:
+    backstage.io/linguist: 'https://github.com/backstage/backstage/tree/master/plugins/playlist'
+spec:
+  type: service
+  lifecycle: demo
+  owner: FSG
+  system: otel-demo
+  dependsOn: []
+  apiConsumedBy: []
