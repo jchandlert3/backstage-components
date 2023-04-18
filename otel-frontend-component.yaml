@@ -19,5 +19,5 @@ spec:
   lifecycle: demo
   owner: FSG
   system: otel-demo
-  dependsOn: ['resource:otel-back-end']
+  dependsOn: ['component:otel-back-end']
   apiConsumedBy: []
