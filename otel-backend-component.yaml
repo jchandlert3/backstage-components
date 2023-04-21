@@ -14,6 +14,7 @@ metadata:
       icon: web
   annotations:
     backstage.io/linguist: 'https://github.com/backstage/backstage/tree/master/plugins/playlist'
+    harness.io/project-url: https://app.harness.io/ng/#/account/GKaZCHFqTmqWZd874phqlw/home/orgs/FSG/projects/Experiandemo/
 spec:
   type: service
   lifecycle: demo
