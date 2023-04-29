@@ -1,37 +1,79 @@
----
 apiVersion: scaffolder.backstage.io/v1beta3
+# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-template
 kind: Template
 metadata:
-  name: HTTP-testing
-  title: Http testing for post/get
-  description: Testing get functionality with get
+  name: Harness-Template
+  title: Example Harness Template
+  description: A template for scaffolder that intantiates a full Harness project for the selected language type
 spec:
-  owner: roadie
+  owner: user:guest
   type: service
 
+  # These parameters are used to generate the input form in the frontend, and are
+  # used to gather input data for the execution of the template.
   parameters:
-    - title: Fill in some params
+    - title: Fill in some steps
+      required:
+        - name
       properties:
-        httpGetPath:
-          title: Get Path
+        name:
+          title: Name
           type: string
-          description: The path you want to get on your backstage instance
+          description: Unique name of the component
           ui:autofocus: true
           ui:options:
             rows: 5
-
+        owner:
+          title: owner
+          type: string
+          description: Your name
+          ui:autofocus: false
+          ui:options:
+            rows: 2
+    - title: Select a project template
+      required:
+        - templateType
+      properties:
+        templateType:
+          title: Codebase type
+          type: string
+          ui:field: OwnerPicker
+          ui:options:
+            catalogFilter:
+              kind: [Template]
+  # These steps are executed in the scaffolder backend, using data that we gathered
+  # via the parameters above.
   steps:
-    - id: backstage_request
-      name: backstage request
-      action: http:backstage:request
+    # Each step executes an action, in this case one templates files into the working directory.
+    # - id: fetch-base
+    #   name: Fetch Base
+    #   action: fetch:template
+    #   input:
+    #     url: ./content
+    #     values:
+    #       name: ${{ parameters.name }}
+    # This step publishes the contents of the working directory to GitHub.
+    - id: publish
+      name: Publish
+      action: acme:file:create
       input:
-        method: 'GET'
-        path: '/proxy/snyk/org/<some-org>/project/<some-project-id>/aggregated-issues'
-        headers:
-          test: 'hello'
-          foo: 'bar'
+        contents: "Name: ${{ parameters.name }} Codebase: ${{ parameters.templateType }} Owner: ${{ parameters.owner }}"
+        filename: ${{ parameters.name }}
+        #filename: ${{ parameters.repoUrl }}
 
+    # The final step is to register our new component in the catalog.
+    #- id: register
+    #  name: Register
+    #  action: catalog:register
+    #  input:
+    #    repoContentsUrl: ${{ steps['publish'].output.repoContentsUrl }}
+    #    catalogInfoPath: '/catalog-info.yaml'
+
+  # Outputs are displayed to the user after a successful execution of the template.
   output:
-    getResponse: '{{ steps.backstage_request.output.body }}'
-    getCode: '{{ steps.backstage_request.output.code }}'
-    getHeaders: '{{ steps.backstage_request.output.headers }}'
+    links:
+      - title: Repository
+        url: ${{ steps['publish'].output.remoteUrl }}
+      - title: Open in catalog
+        icon: catalog
+        entityRef: ${{ steps['register'].output.entityRef }}
